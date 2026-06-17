@@ -1,1 +1,49 @@
+name: Care Companion CI/CD Deployment
 
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build and Publish Backend
+      run: |
+        # AGAR AAPKE BACKEND FOLDER KA NAAM KUCH AUR HAI, TOH "Backend" KO CHANGE KAR LAIN
+        dotnet publish Backend/CareOS.Api.csproj -c Release -o ./backend-dist
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Build Frontend
+      run: |
+        # AGAR AAPKE FRONTEND FOLDER KA NAAM KUCH AUR HAI, TOH "Frontend" KO CHANGE KAR LAIN
+        cd Frontend
+        npm install
+        npm run build
+      env:
+        NODE_OPTIONS: "--max-old-space-size=1024"
+
+    - name: Deploying to AWS EC2 via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          sudo systemctl stop carecompanion-api.service
+          sudo systemctl start carecompanion-api.service
+          sudo systemctl restart nginx
+          echo "Deployment successful!"
