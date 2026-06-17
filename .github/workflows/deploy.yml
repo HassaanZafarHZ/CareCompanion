@@ -22,7 +22,7 @@ jobs:
     - name: Build and Publish Backend
       run: |
         # ZAROORI NOTE: Agar aapke backend folder ka naam choti abc mein 'backend' hai, toh neeche 'Backend' ko 'backend' kar dain
-        dotnet publish Backend/*.csproj -c Release -o ./backend-dist
+        dotnet publish CareCompanionBackend/*.csproj -c Release -o ./backend-dist
 
     # 3. React (Frontend) ko build karna
     - name: Setup Node.js
@@ -33,7 +33,7 @@ jobs:
     - name: Build Frontend
       run: |
         # ZAROORI NOTE: Agar aapke frontend folder ka naam choti abc mein 'frontend' hai, toh neeche 'Frontend' ko 'frontend' kar dain
-        cd Frontend
+        cd CareCompanionFrontendd
         npm install
         npm run build
       env:
