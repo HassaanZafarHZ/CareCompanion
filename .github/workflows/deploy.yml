@@ -21,8 +21,10 @@ jobs:
 
     - name: Build and Publish Backend
       run: |
-        # ZAROORI NOTE: Agar aapke backend folder ka naam choti abc mein 'backend' hai, toh neeche 'Backend' ko 'backend' kar dain
-        dotnet publish CareCompanionBackend/*.csproj -c Release -o ./backend-dist
+        # Yeh command CareCompanionBackend ke andar khud hi deep ja kar .csproj file dhoond legi
+        PROJECT_FILE=$(find ./CareCompanionBackend -name "*.csproj" | head -n 1)
+        echo "Found project file: $PROJECT_FILE"
+        dotnet publish "$PROJECT_FILE" -c Release -o ./backend-dist
 
     # 3. React (Frontend) ko build karna
     - name: Setup Node.js
@@ -32,7 +34,7 @@ jobs:
 
     - name: Build Frontend
       run: |
-        # ZAROORI NOTE: Agar aapke frontend folder ka naam choti abc mein 'frontend' hai, toh neeche 'Frontend' ko 'frontend' kar dain
+        # Copilot ke mutabiq aapke frontend folder ka naam typo ke sath 'CareCompanionFrontendd' hai
         cd CareCompanionFrontendd
         npm install
         npm run build
