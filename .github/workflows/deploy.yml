@@ -21,7 +21,7 @@ jobs:
       run: |
         # AGAR AAPKE BACKEND FOLDER KA NAAM KUCH AUR HAI, TOH "Backend" KO CHANGE KAR LAIN
         dotnet publish Backend/CareOS.Api.csproj -c Release -o ./backend-dist
-
+        dotnet publish Backend/CareOS.Api.csproj -c Release -o ./backend-dist
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
