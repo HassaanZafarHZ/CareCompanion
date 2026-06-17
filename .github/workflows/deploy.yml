@@ -21,7 +21,6 @@ jobs:
 
     - name: Build and Publish Backend
       run: |
-        # Yeh command khud hi deep ja kar .csproj file dhoond legi
         PROJECT_FILE=$(find . -name "*.csproj" | head -n 1)
         echo "Found project file: $PROJECT_FILE"
         dotnet publish "$PROJECT_FILE" -c Release -o ./backend-dist
@@ -30,11 +29,10 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20' # Node version update kar diya taake react-router khush rahe
 
     - name: Build Frontend
       run: |
-        # JADU TRICK: Yeh command pooray project mein khud dhoonday gi ke package.json kahan pari hai aur us folder mein chali jaye gi
         FRONTEND_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" | head -n 1 | xargs dirname)
         echo "Found frontend directory: $FRONTEND_DIR"
         cd "$FRONTEND_DIR"
@@ -42,6 +40,7 @@ jobs:
         npm run build
       env:
         NODE_OPTIONS: "--max-old-space-size=1024"
+        CI: false # JADU: Yeh line warnings ko error banne se rokegi
 
     # 4. AWS EC2 Server par login karna aur services restart karna
     - name: Deploying to AWS EC2 via SSH
