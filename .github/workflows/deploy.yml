@@ -9,9 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. GitHub runner par aapka latest code pull karna
     - name: Checkout Source Code
       uses: actions/checkout@v3
 
+    # 2. .NET Core API (Backend) ko build aur publish karna
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
@@ -19,9 +21,10 @@ jobs:
 
     - name: Build and Publish Backend
       run: |
-        # AGAR AAPKE BACKEND FOLDER KA NAAM KUCH AUR HAI, TOH "Backend" KO CHANGE KAR LAIN
-        dotnet publish Backend/CareOS.Api.csproj -c Release -o ./backend-dist
-        dotnet publish Backend/CareOS.Api.csproj -c Release -o ./backend-dist
+        # ZAROORI NOTE: Agar aapke backend folder ka naam choti abc mein 'backend' hai, toh neeche 'Backend' ko 'backend' kar dain
+        dotnet publish Backend/*.csproj -c Release -o ./backend-dist
+
+    # 3. React (Frontend) ko build karna
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
@@ -29,13 +32,14 @@ jobs:
 
     - name: Build Frontend
       run: |
-        # AGAR AAPKE FRONTEND FOLDER KA NAAM KUCH AUR HAI, TOH "Frontend" KO CHANGE KAR LAIN
+        # ZAROORI NOTE: Agar aapke frontend folder ka naam choti abc mein 'frontend' hai, toh neeche 'Frontend' ko 'frontend' kar dain
         cd Frontend
         npm install
         npm run build
       env:
         NODE_OPTIONS: "--max-old-space-size=1024"
 
+    # 4. AWS EC2 Server par login karna aur services restart karna
     - name: Deploying to AWS EC2 via SSH
       uses: appleboy/ssh-action@master
       with:
@@ -46,4 +50,4 @@ jobs:
           sudo systemctl stop carecompanion-api.service
           sudo systemctl start carecompanion-api.service
           sudo systemctl restart nginx
-          echo "Deployment successful!"
+          echo "Deployment successful! Care Companion is Live."
