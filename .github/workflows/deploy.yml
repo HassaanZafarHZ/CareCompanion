@@ -21,8 +21,8 @@ jobs:
 
     - name: Build and Publish Backend
       run: |
-        # Yeh command CareCompanionBackend ke andar khud hi deep ja kar .csproj file dhoond legi
-        PROJECT_FILE=$(find ./CareCompanionBackend -name "*.csproj" | head -n 1)
+        # Yeh command khud hi deep ja kar .csproj file dhoond legi
+        PROJECT_FILE=$(find . -name "*.csproj" | head -n 1)
         echo "Found project file: $PROJECT_FILE"
         dotnet publish "$PROJECT_FILE" -c Release -o ./backend-dist
 
@@ -34,8 +34,10 @@ jobs:
 
     - name: Build Frontend
       run: |
-        # Copilot ke mutabiq aapke frontend folder ka naam typo ke sath 'CareCompanionFrontendd' hai
-        cd CareCompanionFrontendd
+        # JADU TRICK: Yeh command pooray project mein khud dhoonday gi ke package.json kahan pari hai aur us folder mein chali jaye gi
+        FRONTEND_DIR=$(find . -name "package.json" -not -path "*/node_modules/*" | head -n 1 | xargs dirname)
+        echo "Found frontend directory: $FRONTEND_DIR"
+        cd "$FRONTEND_DIR"
         npm install
         npm run build
       env:
